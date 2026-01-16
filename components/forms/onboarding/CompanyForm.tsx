@@ -26,6 +26,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { countryList } from "@/app/utils/countriesList";
+import { UploadDropzone } from "@/components/general/UploadThingReexported";
+import { toast } from "sonner";
 
 export default function CompanyForm() {
   const form = useForm<z.infer<typeof companySchema>>({
@@ -69,7 +71,7 @@ export default function CompanyForm() {
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
-                  <FormControl>
+                  <FormControl className="w-full">
                     <SelectTrigger>
                       <SelectValue placeholder="Select Location" />
                     </SelectTrigger>
@@ -143,6 +145,33 @@ export default function CompanyForm() {
                   className="resize-none"
                   {...field}
                 />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Full width for logo upload */}
+        <FormField
+          control={form.control}
+          name="logo"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Company Logo</FormLabel>
+              <FormControl>
+                <div>
+                  <UploadDropzone
+                    endpoint="imageUploader"
+                    onClientUploadComplete={(res) => {
+                      field.onChange(res[0].ufsUrl);
+                      toast.success("Logo uploaded successfully!");
+                    }}
+                    onUploadError={() => {
+                      toast.error("Something went wrong. Please try again.");
+                    }}
+                    className="ut-button:bg-primary ut-button:text-white ut-button:hover:bg-primary/90 ut-label:text-muted-foreground ut-allowed-content:text-muted-foreground border-primary"
+                  />
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
